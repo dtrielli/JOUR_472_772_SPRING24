@@ -46,69 +46,93 @@ md_grant_loans
 
 ### Task 4: Group and count to identify problems in Grantee column
 
-**Task** Run the following code to group and count records in the Grantee column, and filter to examine only recipients that start with W. Name a problem that you see that is preventing proper grouping. **Answer**
+**Task** Run the following code to group and count records in the Grantee column, and filter to examine only recipients that start with Y. Name a problem that you see that is preventing proper grouping. **Answer**
 
 ```{r}
-# Now let's try and group and count the number of expenditures by recipient. To make it a bit more manageable, let's use another string function from `stringr` and filter for recipients that start with the uppercase "W" or lowercase "w" using the function `str_detect()` with a regular expression.  
+# Now let's try and group and count the number of expenditures by recipient. To make it a bit more manageable, let's use another string function from `stringr` and filter for recipients that start with the uppercase "Y" or lowercase "y" using the function `str_detect()` with a regular expression.  
 
-# The filter function in the codeblock below says: look in the Grantee column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "w" OR (the vertical "|", called a pipe, means OR) an uppercase "W". 
+# The filter function in the codeblock below says: look in the Grantee column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "y" OR (the vertical "|", called a pipe, means OR) an uppercase "Y". 
 
 md_grant_loans |>
   group_by(Grantee) |>
   summarise(
     count=n()
   ) |>
-  filter(str_detect(Grantee, '^w|^W')) |>
+  filter(str_detect(Grantee, '^y|^Y')) |>
   arrange(Grantee)
 ```
 
 ### Task 5: Use refinr to clean the grantee_clean field.
 
-**Task** Run the following code to make a copy of the Grantee field called grantee_clean, then use the `key_collision_merge` function from refinr to attempt to standardize similar values. Store it as a new object called cleaned_md_grant_loans Click the black arrow on the table to examine the Grantee and grantee_clean columns. Looking at the results on the first 3 pages only (first 30 rows), name two changes the refinr package made, by comparing Grantee to grantee_clean. **Answer**
+**Task** The `key_collision_merge` function from refinr attempts to standardize similar values. Here's an example:
+
+```{r}
+x <- c("Acme Pizza, Inc.", "ACME PIZZA COMPANY", "pizza, acme llc",
+       "Acme Pizza, Inc.")
+key_collision_merge(vect = x)
+```
+
+Run the following code to make a copy of the Grantee field called grantee_clean. Store it as a new object called cleaned_md_grant_loans Click the black arrow on the table to examine the Grantee and grantee_clean columns. Looking at the results on the first 3 pages only (first 30 rows), name two changes the refinr package made, by comparing Grantee to grantee_clean. **Answer**
 
 ```{r}
 cleaned_md_grant_loans <- md_grant_loans |>
-  mutate(grantee_clean=key_collision_merge(Grantee)) |>
-  select(Grantee, grantee_clean, everything())
+  mutate(grantee_clean=key_collision_merge(vect = Grantee)) |>
+  mutate(changed = case_when
+         (Grantee == grantee_clean ~ "Did not change",
+         .default = "Changed")) |>
+  select(Grantee, grantee_clean, changed, everything())
+  
 
 cleaned_md_grant_loans
-
 ```
 
-### Task 6: Filter cleaned_md_grant_loans to examine recipients that start with W
+### Task 6: Filter cleaned_md_grant_loans to examine recipients that start with Y
 
-**Task** Run the following code to group by grantee_clean and Grantee, then filter for recipients that start with W. Name three changes the refinr function made in the first 30 results. **Answer**
+**Task** Run the following code to group by grantee_clean and Grantee, then filter for recipients that start with Y. Name three changes the refinr function made in the first 30 results. **Answer**
 
 ```{r}
-cleaned_md_grant_loans |>
+comparison_clean_grantee <- cleaned_md_grant_loans |>
   group_by(Grantee, grantee_clean) |>
   summarise(
     count=n()
-  ) |>
-  filter(str_detect(Grantee, '^w|^W')) |>
-  arrange(Grantee)
+    ) |>
+  filter(str_detect(Grantee, '^y|^Y')) |>
+  arrange(Grantee) |>
+  mutate(changed = case_when
+         (Grantee == grantee_clean ~ "Did not change",
+         .default = "Changed"))
+
+comparison_clean_grantee
 ```
 
-### Task 7: Use a different refinr method to clean the city_clean field.
+### Task 7: Use a different refinr method to clean the Grantee field.
 
-**Task** Run the following code to use the n_gram_merge() function to clean the data, then group by grantee_clean and Grantee to examine recipients that start with W. Look at the differences. Does the changes it made vary substantially from the previous use of key_collision_merge? **Answer**
+**Task** Refinr has other methods to try to standardize data, such as the n_gram_merge() function. Here's an example:
 
 ```{r}
-cleaned_md_grant_loans <- md_grant_loans |>
+x <- c("Acme Pizza, Inc.", "ACME PIZZA COMPANY", "pizza, acme llc",
+       "Acme Pizza, Inc.","Acme Pizza, Inc.")
+key_collision_merge(vect = x)
+n_gram_merge(vect = x)
+```
+
+Run the following code to use the n_gram_merge() function to clean the data, then group by grantee_clean and Grantee to examine recipients that start with Y. Look at the differences. Does the changes it made vary substantially from the previous use of key_collision_merge? **Answer**
+
+```{r}
+cleaned_md_grant_loans_n_gram_merge <- md_grant_loans |>
   mutate(grantee_clean=n_gram_merge(Grantee)) |>
   select(Grantee, grantee_clean, everything())
 
-cleaned_md_grant_loans
-
-
-cleaned_md_grant_loans |>
+comparison_clean_grantee_n_gram <- cleaned_md_grant_loans_n_gram_merge |>
   group_by(Grantee, grantee_clean) |>
   summarise(
     count=n()
-  ) |>
-  filter(str_detect(Grantee, '^w|^W')) |>
-  arrange(Grantee)
-
+    ) |>
+  filter(str_detect(Grantee, '^y|^Y')) |>
+  arrange(Grantee) |>
+  mutate(changed = case_when
+         (Grantee == grantee_clean ~ "Did not change",
+         .default = "Changed"))
 ```
 
 ### Task 8: Follow the directions in the textbook to use Open Refine
