@@ -68,8 +68,8 @@ As you can see, we have a GEOID, NAME, then variable and value. Because those ar
 **Task** Run the following codeblock to rename the population total columns in each dataframe, and merges both datasets:
 
 ```{r}
-p10 |> select(GEOID, NAME, value) |> rename(Population2010=value) -> p10
-p00 |> select(GEOID, NAME, value) |> rename(Population2000=value) -> p00
+p10 |> select(GEOID, NAME, value) |> rename(population2010=value) -> p10
+p00 |> select(GEOID, NAME, value) |> rename(population2000=value) -> p00
 
 alldata <- p00 |> inner_join(p10)
 ```
@@ -79,7 +79,7 @@ And now we calculate the percent change.
 **Task** Run the following codeblock to calculate the percentage change and put the state with the largest percentage growth below. **Answer**
 
 ```{r}
-alldata |> mutate(change = ((Population2010-Population2000)/Population2000)*100) |> arrange(desc(change))
+alldata |> mutate(change = ((population2010-population2000)/population2000)*100) |> arrange(desc(change))
 ```
 
 ## The ACS
