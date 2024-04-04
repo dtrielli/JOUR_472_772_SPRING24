@@ -83,10 +83,21 @@ baltco_911_calls_by_month |>
 **Task** Run the following code. Explain what you see after running the code in the space below. What has changed from the last codeblock? **Answer**
 
 ```{r}
-baltco_911_calls_by_month |>
+
+baltco_911_calls_by_month_bar <- baltco_911_calls_by_month |>
   ggplot() +
   geom_bar(aes(x=reorder(month,total_calls), weight=total_calls)) +
   coord_flip()
+
+baltco_911_calls_by_month_bar
+```
+
+### Task 6: Run the following code
+
+**Task** Run the following code. What do you think this does? **Answer**
+
+```{r}
+ggsave('baltco_911_calls_by_month_bar.png', plot = baltco_911_calls_by_month_bar, width = 16, height = 8)
 ```
 
 ## Line charts
@@ -97,7 +108,7 @@ Line charts can show change over time. It works much the same as a bar chart, co
 
 So, let's use the same Baltimore County data and generate a count of contributions for each date in our data.
 
-### Task 6: Create a dataframe of 911 calls by date
+### Task 7: Create a dataframe of 911 calls by date
 
 **Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
 
@@ -108,14 +119,14 @@ baltco_911_calls_by_date <- baltco_911_calls |>
     total_calls=n()
   )
 
-baltco_911_calls_by_date 
+baltco_911_calls_by_date
 ```
 
 And now let's make a line chart to look for patterns in this data.
 
 We'll put the date on the x axis and total contributions on the y axis.
 
-### Task 7: Run the following code
+### Task 8: Run the following code
 
 **Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
 
@@ -133,7 +144,7 @@ We can't really tell. So let's modify the x axis to have one tick mark and label
 
 We'll set the date_breaks to appear for every week; if we wanted every month, we'd say date_breaks = "1 month". We can set the date to appear as month abbreviated name (%b) and day (%d).
 
-### Task 8: Run the following code
+### Task 9: Run the following code
 
 **Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
 
@@ -146,7 +157,7 @@ baltco_911_calls_by_date |>
 
 Those are a little hard to read, so we can turn them 45 degrees to remove the overlap using the theme() function for styling. With "axis.text.x = element_text(angle = 45, hjust=1)" we're saying, turn the date labels 45 degrees.
 
-### Task 9: Run the following code
+### Task 10: Run the following code
 
 **Task** Run the following code. Explain what you see after running the code in the space below. **Answer**
 
