@@ -38,38 +38,24 @@ Get the geometry for Maryland's counties using tigris and, joining that datafram
 
 ```{r}
 #Calculate percentages for both candidates and the difference between them per county
-md_statewide <- read_csv("data/md_statewide_county.csv") |>
-  clean_names() |>
-  mutate(geoid = as.character(geoid)) |>
-  mutate(total_gov = cox + moore + lashar + wallace + harding + sefcik + gov_writein) |>
-  mutate(pct_moore = (moore / total_gov)*100) |>
-  mutate(total_ag = brown + peroutka + ag_writein) |>
-  mutate(pct_brown = (brown / total_ag)*100) |>
-  mutate(moore_brown_diff = pct_moore - pct_brown)
-  
+
 ```
 
 ```{r}
 #Take county geometry from tigris
-counties <- counties()
 
 #Filter out MD counties
-md_counties <- counties |> filter(STATEFP == '24')
 
 ```
 
 ```{r}
 #Merge geometries with voting data
-md_statewide_geometry <- md_counties |> inner_join(md_statewide,by=c('GEOID' = 'geoid'))
 
 ```
 
 ```{r}
 #Create the map
-ggplot() +
-  geom_sf(data=md_statewide_geometry,aes(fill=moore_brown_diff)) +
-  theme_minimal() +
-  scale_fill_gradient2()
+
 ```
 
 **Q2.** Make a county-level map to explore the number of customers impacted by power outages in Maryland. Load the `county_outages_march2023.csv` file in the data folder and calculate a rate of customers with outages per 10,000 total customers for each county. Then join that dataframe to your Maryland counties dataframe you made in Q1 and create a county-level map of the results; you may need to tweak the fill scale to make the distinctions clearer. What's the potential story here? Given access to other months' outage data, what would your next steps be in reporting a story?
@@ -78,6 +64,7 @@ ggplot() +
 
 ```{r}
 #Read data and calculate rate of outages per customer
+
 ```
 
 ```{r}
